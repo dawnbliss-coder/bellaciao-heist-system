@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Resources - Operation Bella Ciao{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="display-4"><i class="bi bi-box-seam"></i> Resource Management</h1>
+        <p class="lead">Monitor critical supplies and equipment</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Action Bar -->
+    <div class="d-flex justify-content-end gap-2 mb-4">
+        <a href="/resources/add" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Add Resource
+        </a>
+        <a href="/export/resources" class="btn btn-outline-secondary">
+            <i class="bi bi-download"></i> Export CSV
+        </a>
+    </div>
+
+
+    <!-- Resource Chart -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-bar-chart-fill"></i> Resource Status Overview</h5>
+            <canvas id="resourceChart"></canvas>
+        </div>
+    </div>
+    
+    <!-- Resource Cards -->
+    <div class="row g-4">
+        {% for resource in resources %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 
+                {% if resource.status == 'critical' %}border-danger
+                {% elif resource.status == 'warning' %}border-warning
+                {% else %}border-success{% endif %}" 
+                style="border-width: 3px;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="card-title">
+                            <i class="bi bi-box"></i> {{ resource.Type }}
+                        </h5>
+                        <span class="badge badge-custom status-{{ resource.status }}">
+                            {{ resource.status|upper }}
+                        </span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small>Current Quantity</small>
+                            <strong>{{ resource.CurrentQuantity }}</strong>
+                        </div>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar 
+                                {% if resource.status == 'critical' %}bg-danger
+                                {% elif resource.status == 'warning' %}bg-warning
+                                {% else %}bg-success{% endif %}" 
+                                role="progressbar" 
+                                style="width: {{ (resource.CurrentQuantity / (resource.CriticalThreshold * 3) * 100) | round }}%">
+                                {{ resource.CurrentQuantity }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between text-muted mb-3">
+                        <small>
+                            <i class="bi bi-exclamation-triangle"></i> 
+                            Critical Threshold
+                        </small>
+                        <small><strong>{{ resource.CriticalThreshold }}</strong></small>
+                    </div>
+                    
+                    {% if resource.status == 'critical' %}
+                    <div class="alert alert-danger py-2 mb-3" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill"></i> 
+                        <strong>ACTION REQUIRED!</strong> Replenish immediately.
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Update Quantity Form -->
+                    <form method="POST" action="/resources/update/{{ resource.ResourceID }}">
+                        <label class="form-label small">Update Quantity</label>
+                        <div class="input-group input-group-sm">
+                            <input type="number" name="quantity" class="form-control" 
+                                   placeholder="New quantity" min="0" 
+                                   value="{{ resource.CurrentQuantity }}" required>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-arrow-up-circle"></i> Update
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Resource Status Chart
+const ctx = document.getElementById('resourceChart').getContext('2d');
+const resources = {{ resources | tojson }};
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: resources.map(r => r.Type),
+        datasets: [{
+            label: 'Current Quantity',
+            data: resources.map(r => r.CurrentQuantity),
+            backgroundColor: resources.map(r => {
+                if (r.status === 'critical') return 'rgba(231, 76, 60, 0.8)';
+                if (r.status === 'warning') return 'rgba(243, 156, 18, 0.8)';
+                return 'rgba(39, 174, 96, 0.8)';
+            }),
+            borderColor: resources.map(r => {
+                if (r.status === 'critical') return 'rgba(231, 76, 60, 1)';
+                if (r.status === 'warning') return 'rgba(243, 156, 18, 1)';
+                return 'rgba(39, 174, 96, 1)';
+            }),
+            borderWidth: 2
+        }, {
+            label: 'Critical Threshold',
+            data: resources.map(r => r.CriticalThreshold),
+            backgroundColor: 'rgba(149, 165, 166, 0.3)',
+            borderColor: 'rgba(149, 165, 166, 1)',
+            borderWidth: 2,
+            type: 'line',
+            borderDash: [5, 5]
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top'
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

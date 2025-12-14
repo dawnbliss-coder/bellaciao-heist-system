@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Assign Crew - {{ phase.Phasecodename }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="display-4"><i class="bi bi-person-plus"></i> Assign Crew to Phase</h1>
+        <p class="lead">{{ phase.Phasecodename }}</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    {% if crew %}
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="crew_codename" class="form-label">Select Crew Member *</label>
+                            <select class="form-select" id="crew_codename" name="crew_codename" required>
+                                <option value="">Choose a crew member...</option>
+                                {% for member in crew %}
+                                <option value="{{ member.CodeName }}">
+                                    {{ member.CodeName }} - {{ member.FirstName }} {{ member.LastName }} ({{ member.Specialization }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> Assign to Phase
+                            </button>
+                            <a href="/phases" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> All crew members are already assigned to this phase.
+                    </div>
+                    <a href="/phases" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Phases
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

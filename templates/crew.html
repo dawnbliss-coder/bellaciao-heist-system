@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Crew Members - Operation Bella Ciao{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="display-4"><i class="bi bi-people-fill"></i> Crew Members</h1>
+        <p class="lead">La Resistencia - Our elite team</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Search & Action Bar -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <form action="/crew/search" method="GET" class="row g-2">
+                        <div class="col-md-5">
+                            <input type="text" name="q" class="form-control" placeholder="Search by name or codename..." value="{{ search_query or '' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" name="spec" class="form-control" placeholder="Filter by specialization..." value="{{ search_spec or '' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-search"></i> Search
+                            </button>
+                        </div>
+                        {% if search_query or search_spec %}
+                        <div class="col-12">
+                            <a href="/crew" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Clear Filters
+                            </a>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="/crew/add" class="btn btn-success me-2">
+                        <i class="bi bi-plus-circle"></i> Add Crew
+                    </a>
+                    <a href="/export/crew" class="btn btn-outline-secondary">
+                        <i class="bi bi-download"></i> Export CSV
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Crew Cards -->
+    <div class="row g-4">
+        {% if crew %}
+            {% for member in crew %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h5 class="card-title mb-1">{{ member.CodeName }}</h5>
+                                <small class="text-muted">{{ member.FirstName }} {{ member.LastName }}</small>
+                            </div>
+                            <span class="badge badge-custom 
+                                {% if member.LoyaltyScore >= 85 %}loyalty-high
+                                {% elif member.LoyaltyScore >= 70 %}loyalty-medium
+                                {% else %}loyalty-low{% endif %}">
+                                {{ member.LoyaltyScore }}%
+                            </span>
+                        </div>
+                        
+                        <p class="mb-2">
+                            <i class="bi bi-briefcase-fill text-primary"></i>
+                            <strong>Specialization:</strong><br>
+                            {{ member.Specialization }}
+                        </p>
+                        
+                        {% if member.WeaponProficiency %}
+                        <p class="mb-2">
+                            <i class="bi bi-bullseye text-danger"></i>
+                            <strong>Weapon Skill:</strong><br>
+                            {{ member.WeaponProficiency }}
+                        </p>
+                        {% endif %}
+                        
+                        {% if member.SecurityClearanceLevel %}
+                        <p class="mb-2">
+                            <i class="bi bi-shield-lock-fill text-success"></i>
+                            <strong>Clearance:</strong>
+                            {{ member.SecurityClearanceLevel }}
+                        </p>
+                        {% endif %}
+                        
+                        {% if member.TechnicalCertification %}
+                        <p class="mb-2">
+                            <i class="bi bi-cpu-fill text-info"></i>
+                            <strong>Certification:</strong><br>
+                            {{ member.TechnicalCertification }}
+                        </p>
+                        {% endif %}
+                        
+                        {% if member.traits %}
+                        <div class="mt-3">
+                            <small class="text-muted d-block mb-1">Traits:</small>
+                            {% for trait in member.traits %}
+                            <span class="badge bg-warning text-dark me-1 mb-1">{{ trait }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mt-3">
+                            <a href="/crew/{{ member.CodeName }}" class="btn btn-sm btn-outline-danger w-100 mb-2">
+                                <i class="bi bi-eye-fill"></i> View Details
+                            </a>
+                            <div class="d-flex gap-2">
+                                <a href="/crew/edit/{{ member.CodeName }}" class="btn btn-sm btn-warning flex-fill">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+                                <form method="POST" action="/crew/delete/{{ member.CodeName }}" class="flex-fill" onsubmit="return confirm('Are you sure you want to delete {{ member.CodeName }}? This action cannot be undone.')">
+                                    <button type="submit" class="btn btn-sm btn-danger w-100">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info text-center" role="alert">
+                    <i class="bi bi-info-circle"></i> No crew members found. 
+                    {% if search_query or search_spec %}
+                    Try adjusting your search filters.
+                    {% else %}
+                    <a href="/crew/add" class="alert-link">Add your first crew member</a>.
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

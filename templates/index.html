@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Operation Bella Ciao{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="display-4"><i class="bi bi-speedometer2"></i> Command Center</h1>
+        <p class="lead">Real-time heist operation monitoring</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card red">
+                <div class="card-body text-center">
+                    <i class="bi bi-people-fill" style="font-size: 3rem;"></i>
+                    <h2 class="mt-3">{{ crew_count }}</h2>
+                    <p class="mb-0">Crew Members</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card stat-card gold">
+                <div class="card-body text-center">
+                    <i class="bi bi-person-badge" style="font-size: 3rem;"></i>
+                    <h2 class="mt-3">{{ hostage_count }}</h2>
+                    <p class="mb-0">Hostages</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-diagram-3" style="font-size: 3rem;"></i>
+                    <h2 class="mt-3">{{ phase_count }}</h2>
+                    <p class="mb-0">Active Phases</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card stat-card {% if critical_resources > 0 %}red{% else %}green{% endif %}">
+                <div class="card-body text-center">
+                    <i class="bi bi-exclamation-triangle-fill" style="font-size: 3rem;"></i>
+                    <h2 class="mt-3">{{ critical_resources }}</h2>
+                    <p class="mb-0">Critical Resources</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row g-4 mb-4">
+        <!-- Crew Loyalty Chart -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-heart-fill text-danger"></i> Crew Loyalty Scores</h5>
+                    <canvas id="loyaltyChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Hostage Status Distribution -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-pie-chart-fill text-primary"></i> Hostage Status</h5>
+                    <canvas id="hostageChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phase Progress -->
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-clock-history"></i> Phase Timeline</h5>
+                    <canvas id="phaseChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Crew Loyalty Bar Chart
+const loyaltyCtx = document.getElementById('loyaltyChart').getContext('2d');
+const loyaltyData = {{ loyalty_data | tojson }};
+
+new Chart(loyaltyCtx, {
+    type: 'bar',
+    data: {
+        labels: loyaltyData.map(d => d.CodeName),
+        datasets: [{
+            label: 'Loyalty Score',
+            data: loyaltyData.map(d => d.LoyaltyScore),
+            backgroundColor: 'rgba(193, 39, 45, 0.8)',
+            borderColor: 'rgba(193, 39, 45, 1)',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100
+            }
+        }
+    }
+});
+
+// Hostage Status Pie Chart
+const hostageCtx = document.getElementById('hostageChart').getContext('2d');
+const hostageData = {{ hostage_status | tojson }};
+
+new Chart(hostageCtx, {
+    type: 'doughnut',
+    data: {
+        labels: hostageData.map(d => d.Status),
+        datasets: [{
+            data: hostageData.map(d => d.count),
+            backgroundColor: [
+                'rgba(39, 174, 96, 0.8)',
+                'rgba(52, 152, 219, 0.8)',
+                'rgba(243, 156, 18, 0.8)',
+                'rgba(231, 76, 60, 0.8)'
+            ],
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true
+    }
+});
+
+// Phase Progress Chart
+const phaseCtx = document.getElementById('phaseChart').getContext('2d');
+const phaseData = {{ phases | tojson }};
+
+new Chart(phaseCtx, {
+    type: 'line',
+    data: {
+        labels: phaseData.map(p => p.Phasecodename),
+        datasets: [{
+            label: 'Planned Duration (hrs)',
+            data: phaseData.map(p => p.Planned_Duration),
+            borderColor: 'rgba(52, 152, 219, 1)',
+            backgroundColor: 'rgba(52, 152, 219, 0.2)',
+            tension: 0.4,
+            fill: true
+        }, {
+            label: 'Current Dissonance',
+            data: phaseData.map(p => p.Current_Dissonance),
+            borderColor: 'rgba(231, 76, 60, 1)',
+            backgroundColor: 'rgba(231, 76, 60, 0.2)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

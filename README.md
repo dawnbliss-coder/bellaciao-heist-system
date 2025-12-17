@@ -309,26 +309,6 @@ http://127.0.0.1:5000
 
 ---
 
-## How to Describe This Project on Your CV
-
-Example bullets you can adapt:
-
-- Built a full-stack heist management system in Flask and MySQL with 15+ normalized tables, foreign keys, and complex N‑ary relationships.  
-- Implemented an interactive dashboard using Chart.js to visualize crew loyalty, hostage status distribution, and phase risk metrics.  
-- Developed CRUD, search/filter, and CSV export functionality for crew, hostages, resources, and phases with a modern Bootstrap 5 UI.  
-- Designed and enforced referential integrity using surrogate keys (`AUTO_INCREMENT`) and cascading foreign keys for consistent data across the system.  
-
----
-
-## License
-
-This project is for educational purposes only.
-
-## Contributors
-
-- **Priyanka Agarwal** – IIIT Hyderabad
-- Team: DnA_Not_Found (Team 54)
-
 ## Acknowledgments
 
 - Inspired by *La Casa de Papel* (Money Heist)

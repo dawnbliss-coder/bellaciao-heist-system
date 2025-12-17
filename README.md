@@ -2,7 +2,7 @@
 
 A full-stack web application for managing a Money Heist-inspired operation with crew tracking, resource monitoring, and interactive visualizations. Built with Flask, MySQL, and Chart.js.
 
-![Dashboard Preview]<img src="screenshots/Screenshot%202025-12-14%20at%2012.41.45%E2%80%AFPM.png" alt="Dashboard with Charts" height="700">
+<img src="screenshots/Screenshot%202025-12-14%20at%2012.41.45%E2%80%AFPM.png" alt="Dashboard with Charts" height="700">
 
 ## 🎯 Key Features
 
@@ -33,7 +33,10 @@ Implemented a normalized relational schema with:
 
 ## 📸 Screenshots
 
-[Add 2-3 key screenshots showing dashboard, crew management, resource monitoring]
+<img src="screenshots/Screenshot%202025-12-14%20at%2012.41.56%E2%80%AFPM.png" alt="Dashboard with Charts" height="400">
+<img src="screenshots/Screenshot%202025-12-14%20at%2012.42.06%E2%80%AFPM.png" alt="Dashboard with Charts" height="400">
+<img src="screenshots/Screenshot%202025-12-14%20at%2012.42.15%E2%80%AFPM.png" alt="Dashboard with Charts" height="400">
+<img src="screenshots/Screenshot%202025-12-14%20at%2012.42.35%E2%80%AFPM.png" alt="Dashboard with Charts" height="400">
 
 ## 🚀 Quick Start
 

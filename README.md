@@ -61,7 +61,7 @@ python app.py
 ## Visit http://127.0.0.1:5000
 \`\`\`
 
-## 📊 Technical Highlights
+## Technical Highlights
 
 - Custom SQL query optimization for complex joins across 12+ tables
 - AJAX-based inline resource updates without page reload

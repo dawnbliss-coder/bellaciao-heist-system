@@ -4,7 +4,7 @@ A full-stack web application for managing a Money Heist-inspired operation with 
 
 <img src="screenshots/Screenshot%202025-12-14%20at%2012.41.45%E2%80%AFPM.png" alt="Dashboard with Charts" height="700">
 
-## 🎯 Key Features
+## Key Features
 
 - **Interactive Dashboard** - Real-time charts for crew loyalty, hostage status, and phase risk analysis
 - **Crew Management** - CRUD operations with psychological profiling and deviation tracking
@@ -13,14 +13,14 @@ A full-stack web application for managing a Money Heist-inspired operation with 
 - **Phase Timeline** - Risk assessment and crew/resource assignment system
 - **CSV Export** - Export data for all entities
 
-## 🛠️ Technologies
+## Technologies
 
 **Backend:** Python, Flask, PyMySQL  
 **Frontend:** HTML5, Jinja2, Bootstrap 5, Chart.js  
 **Database:** MySQL with normalized schema (3NF)  
 **Architecture:** MVC pattern with RESTful endpoints
 
-## 🏗️ Database Design
+## Database Design
 
 Implemented a normalized relational schema with:
 - 12+ entities including ISA hierarchy for crew specializations
@@ -31,14 +31,14 @@ Implemented a normalized relational schema with:
 
 [View Full Schema](schema.sql)
 
-## 📸 Screenshots
+## Screenshots
 
 <img src="screenshots/Screenshot%202025-12-14%20at%2012.41.56%E2%80%AFPM.png" alt="Dashboard with Charts" height="400">
 <img src="screenshots/Screenshot%202025-12-14%20at%2012.42.06%E2%80%AFPM.png" alt="Dashboard with Charts" height="400">
 <img src="screenshots/Screenshot%202025-12-14%20at%2012.42.15%E2%80%AFPM.png" alt="Dashboard with Charts" height="400">
 <img src="screenshots/Screenshot%202025-12-14%20at%2012.42.35%E2%80%AFPM.png" alt="Dashboard with Charts" height="400">
 
-## 🚀 Quick Start
+## Quick Start
 
 \`\`\`bash
 # Clone and setup
@@ -58,7 +58,7 @@ cp .env.example .env
 
 # Run
 python app.py
-# Visit http://127.0.0.1:5000
+## Visit http://127.0.0.1:5000
 \`\`\`
 
 ## 📊 Technical Highlights

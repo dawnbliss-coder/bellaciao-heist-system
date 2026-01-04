@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Hostage Details - Operation Bella Ciao{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="display-5">
+            <i class="bi bi-person-badge"></i> Hostage Profile
+        </h1>
+        <p class="lead">Detailed hostage information and interaction history</p>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- Hostage Information Card -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h4 class="card-title mb-3">
+                {{ hostage.FirstName }} {{ hostage.LastName }}
+            </h4>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>ID:</strong> {{ hostage.HostageID }}</p>
+                    <p>
+                        <strong>Status:</strong>
+                        <span class="badge badge-custom 
+                            {% if hostage.Status == 'Cooperative' %}status-good
+                            {% elif hostage.Status == 'Neutral' %}status-warning
+                            {% else %}status-critical{% endif %}">
+                            {{ hostage.Status }}
+                        </span>
+                    </p>
+                    <p><strong>Usefulness:</strong> {{ hostage.Usefulness }}</p>
+                </div>
+
+                <div class="col-md-6">
+                    <p><strong>Instigator:</strong>
+                        {% if hostage.InstigatorFlag %}
+                            <span class="text-danger">Yes</span>
+                        {% else %}
+                            <span class="text-success">No</span>
+                        {% endif %}
+                    </p>
+                    <p><strong>Manager:</strong>
+                        {{ hostage.ManagerCodename or "Not Assigned" }}
+                    </p>
+                    <p><strong>Location:</strong>
+                        {{ hostage.LocationName or "Unknown" }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interaction Logs -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">
+                <i class="bi bi-journal-text"></i> Interaction Logs
+            </h5>
+
+            {% if logs %}
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Crew Member</th>
+                                <th>Interaction Type</th>
+                                <th>Summary</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in logs %}
+                            <tr>
+                                <td>{{ log.Interaction_Timestamp }}</td>
+                                <td>{{ log.Interacting_Crew }}</td>
+                                <td>
+                                    <span class="badge bg-secondary">
+                                        {{ log.Interaction_Type }}
+                                    </span>
+                                </td>
+                                <td>{{ log.Summary }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info mt-3">
+                    <i class="bi bi-info-circle"></i>
+                    No interaction records available for this hostage.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="mt-4">
+        <a href="{{ url_for('hostages_list') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Hostages
+        </a>
+    </div>
+
+</div>
+{% endblock %}

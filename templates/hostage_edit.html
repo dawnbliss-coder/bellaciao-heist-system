@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Hostage #{{ hostage.HostageID }} - Operation Bella Ciao{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="display-4"><i class="bi bi-pencil-square"></i> Edit Hostage</h1>
+        <p class="lead">Update hostage #{{ hostage.HostageID }} - {{ hostage.FirstName }} {{ hostage.LastName }}</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" action="/hostages/edit/{{ hostage.HostageID }}">
+                        <div class="mb-3">
+                            <label class="form-label">Hostage ID</label>
+                            <input type="text" class="form-control" value="#{{ hostage.HostageID }}" disabled>
+                            <small class="text-muted">ID cannot be changed</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" value="{{ hostage.FirstName }} {{ hostage.LastName }}" disabled>
+                            <small class="text-muted">Name cannot be changed</small>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="status" class="form-label">Status *</label>
+                                <select class="form-select" id="status" name="status" required>
+                                    <option value="Cooperative" {% if hostage.Status == 'Cooperative' %}selected{% endif %}>Cooperative</option>
+                                    <option value="Neutral" {% if hostage.Status == 'Neutral' %}selected{% endif %}>Neutral</option>
+                                    <option value="Resistant" {% if hostage.Status == 'Resistant' %}selected{% endif %}>Resistant</option>
+                                    <option value="Hostile" {% if hostage.Status == 'Hostile' %}selected{% endif %}>Hostile</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="usefulness" class="form-label">Usefulness (0-10) *</label>
+                                <input type="number" class="form-control" id="usefulness" name="usefulness" 
+                                       min="0" max="10" value="{{ hostage.Usefulness }}" required>
+                                <div class="progress mt-2" style="height: 20px;">
+                                    <div id="usefulness-bar" class="progress-bar" style="width: {{ hostage.Usefulness * 10 }}%">
+                                        {{ hostage.Usefulness }}/10
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="instigator" name="instigator" 
+                                   {% if hostage.InstigatorFlag %}checked{% endif %}>
+                            <label class="form-check-label" for="instigator">
+                                <i class="bi bi-exclamation-triangle-fill text-danger"></i> Mark as Instigator
+                            </label>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> 
+                            <strong>Note:</strong> Only status, usefulness, and instigator flag can be modified. 
+                            Other details are permanent.
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-check-circle"></i> Update Hostage
+                            </button>
+                            <a href="/hostages" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Update usefulness bar
+const usefulnessInput = document.getElementById('usefulness');
+const usefulnessBar = document.getElementById('usefulness-bar');
+
+function updateUsefulnessBar() {
+    const value = usefulnessInput.value;
+    usefulnessBar.style.width = (value * 10) + '%';
+    usefulnessBar.textContent = value + '/10';
+    
+    if (value >= 7) {
+        usefulnessBar.className = 'progress-bar bg-success';
+    } else if (value >= 4) {
+        usefulnessBar.className = 'progress-bar bg-warning';
+    } else {
+        usefulnessBar.className = 'progress-bar bg-danger';
+    }
+}
+
+// Initialize
+updateUsefulnessBar();
+
+// Update on change
+usefulnessInput.addEventListener('input', updateUsefulnessBar);
+</script>
+{% endblock %}

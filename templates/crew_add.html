@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Add Crew Member - Operation Bella Ciao{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="display-4"><i class="bi bi-person-plus-fill"></i> Add New Crew Member</h1>
+        <p class="lead">Recruit a new agent to the heist</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" action="/crew/add">
+                        <div class="mb-3">
+                            <label for="codename" class="form-label">Code Name *</label>
+                            <input type="text" class="form-control" id="codename" name="codename" required>
+                            <small class="text-muted">Unique identifier (e.g., Tokyo, Berlin)</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="heist_id" class="form-label">Heist ID *</label>
+                            <input type="number" class="form-control" id="heist_id" name="heist_id" value="1" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="first_name" class="form-label">First Name *</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="last_name" class="form-label">Last Name *</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="specialization" class="form-label">Specialization *</label>
+                            <input type="text" class="form-control" id="specialization" name="specialization" 
+                                   placeholder="e.g., Hacker, Assault Specialist, Engineer" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="loyalty_score" class="form-label">Loyalty Score (0-100) *</label>
+                            <input type="number" class="form-control" id="loyalty_score" name="loyalty_score" 
+                                   min="0" max="100" value="75" required>
+                            <div class="progress mt-2" style="height: 20px;">
+                                <div id="loyalty-bar" class="progress-bar bg-warning" style="width: 75%">75%</div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> Add Crew Member
+                            </button>
+                            <a href="/crew" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Update loyalty bar in real-time
+document.getElementById('loyalty_score').addEventListener('input', function() {
+    const value = this.value;
+    const bar = document.getElementById('loyalty-bar');
+    bar.style.width = value + '%';
+    bar.textContent = value + '%';
+    
+    // Change color based on value
+    if (value >= 85) {
+        bar.className = 'progress-bar bg-success';
+    } else if (value >= 70) {
+        bar.className = 'progress-bar bg-warning';
+    } else {
+        bar.className = 'progress-bar bg-danger';
+    }
+});
+</script>
+{% endblock %}

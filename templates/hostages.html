@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Hostages - Operation Bella Ciao{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="display-4"><i class="bi bi-person-badge"></i> Hostage Management</h1>
+        <p class="lead">Track and monitor all hostages</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Filter & Action Bar -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <form action="/hostages/filter" method="GET" class="row g-2">
+                        <div class="col-md-6">
+                            <select name="status" class="form-select">
+                                <option value="">All Statuses</option>
+                                <option value="Cooperative" {% if filter_status == 'Cooperative' %}selected{% endif %}>Cooperative</option>
+                                <option value="Neutral" {% if filter_status == 'Neutral' %}selected{% endif %}>Neutral</option>
+                                <option value="Resistant" {% if filter_status == 'Resistant' %}selected{% endif %}>Resistant</option>
+                                <option value="Hostile" {% if filter_status == 'Hostile' %}selected{% endif %}>Hostile</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-filter"></i> Filter
+                            </button>
+                        </div>
+                        {% if filter_status %}
+                        <div class="col-md-3">
+                            <a href="/hostages" class="btn btn-outline-secondary w-100">
+                                <i class="bi bi-x-circle"></i> Clear Filter
+                            </a>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="/hostages/add" class="btn btn-success me-2">
+                        <i class="bi bi-plus-circle"></i> Add Hostage
+                    </a>
+                    <a href="/export/hostages" class="btn btn-outline-secondary">
+                        <i class="bi bi-download"></i> Export CSV
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hostages Table -->
+    <div class="card">
+        <div class="card-body">
+            {% if hostages %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Location</th>
+                            <th>Usefulness</th>
+                            <th>Manager</th>
+                            <th>Instigator</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for hostage in hostages %}
+                        <tr>
+                            <td><strong>#{{ hostage.HostageID }}</strong></td>
+                            <td>{{ hostage.FirstName }} {{ hostage.LastName }}</td>
+                            <td>
+                                <span class="badge 
+                                    {% if hostage.Status == 'Cooperative' %}bg-success
+                                    {% elif hostage.Status == 'Neutral' %}bg-secondary
+                                    {% elif hostage.Status == 'Resistant' %}bg-warning
+                                    {% else %}bg-danger{% endif %}">
+                                    {{ hostage.Status }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if hostage.LocationName %}
+                                <i class="bi bi-geo-alt-fill"></i> {{ hostage.LocationName }}
+                                {% else %}
+                                <span class="text-muted">Unknown</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="progress" style="height: 20px;">
+                                    <div class="progress-bar 
+                                        {% if hostage.Usefulness >= 7 %}bg-success
+                                        {% elif hostage.Usefulness >= 4 %}bg-warning
+                                        {% else %}bg-danger{% endif %}" 
+                                        role="progressbar" 
+                                        style="width: {{ hostage.Usefulness * 10 }}%">
+                                        {{ hostage.Usefulness }}/10
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {% if hostage.ManagerCodename %}
+                                <span class="badge bg-info">{{ hostage.ManagerCodename }}</span>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if hostage.InstigatorFlag %}
+                                <i class="bi bi-exclamation-triangle-fill text-danger" title="Instigator"></i>
+                                {% else %}
+                                <i class="bi bi-check-circle-fill text-success"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="/hostages/{{ hostage.HostageID }}" class="btn btn-outline-primary" title="View Details">
+                                        <i class="bi bi-info-circle"></i>
+                                    </a>
+                                    <a href="/hostages/edit/{{ hostage.HostageID }}" class="btn btn-outline-warning" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger" 
+                                            onclick="deleteHostage({{ hostage.HostageID }}, '{{ hostage.FirstName }} {{ hostage.LastName }}')" 
+                                            title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info text-center" role="alert">
+                <i class="bi bi-info-circle"></i> No hostages found.
+                {% if filter_status %}
+                Try clearing the filter or selecting a different status.
+                {% else %}
+                <a href="/hostages/add" class="alert-link">Add your first hostage</a>.
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+function deleteHostage(id, name) {
+    if (confirm(`Are you sure you want to delete hostage "${name}"? This action cannot be undone.`)) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/hostages/delete/${id}`;
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+{% endblock %}

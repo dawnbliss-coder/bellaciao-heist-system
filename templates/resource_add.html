@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Add Resource - Operation Bella Ciao{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="display-4"><i class="bi bi-box-seam"></i> Add New Resource</h1>
+        <p class="lead">Add a new resource to the inventory</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" action="/resources/add">
+                        <!-- NO ResourceID field - auto-generated -->
+                        
+                        <div class="mb-3">
+                            <label for="type" class="form-label">Resource Type *</label>
+                            <input type="text" class="form-control" id="type" name="type" 
+                                   placeholder="e.g., Assault Rifles, Medical Supplies, Explosives" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="current_quantity" class="form-label">Current Quantity *</label>
+                                <input type="number" class="form-control" id="current_quantity" name="current_quantity" 
+                                       min="0" value="100" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="critical_threshold" class="form-label">Critical Threshold *</label>
+                                <input type="number" class="form-control" id="critical_threshold" name="critical_threshold" 
+                                       min="0" value="20" required>
+                                <small class="text-muted">Alert when stock falls below this level</small>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> 
+                            <strong>Auto-Generated ID:</strong> Resource ID will be automatically assigned.
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> Add Resource
+                            </button>
+                            <a href="/resources" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
